@@ -2,6 +2,7 @@ import { getOwner } from "@ember/application";
 import { assert } from "@ember/debug";
 import { associateDestroyableChild } from "@ember/destroyable";
 import jexl from "jexl";
+import { DateTime } from "luxon";
 import { cached } from "tracked-toolbox";
 
 import { decodeId } from "@projectcaluma/ember-core/helpers/decode-id";
@@ -199,6 +200,17 @@ export default class Document extends Base {
 
       return null;
     });
+    documentJexl.addTransform("timestamp", (timeStr) => {
+      try {
+        const dateTime = DateTime.fromFormat(timeStr, "yyyy-MM-dd");
+        if (dateTime.isValid) {
+          return dateTime.toMillis();
+        }
+      } catch (error) {
+        console.error("Error parsing date:", error);
+      }
+      return null;
+    });
 
     return documentJexl;
   }
@@ -229,6 +241,7 @@ export default class Document extends Base {
               workflow: _case?.family.workflow.slug,
             },
           },
+          today: DateTime.fromJSDate(new Date()).toISODate(),
         },
       }
     );

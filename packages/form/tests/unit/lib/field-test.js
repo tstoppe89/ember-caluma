@@ -1,5 +1,6 @@
 import { settled } from "@ember/test-helpers";
 import { setupMirage } from "ember-cli-mirage/test-support";
+import { DateTime } from "luxon";
 import { module, test } from "qunit";
 
 import { rawDocumentWithWorkItem } from "./data";
@@ -160,6 +161,7 @@ module("Unit | Library | field", function (hooks) {
             workflow: "root-case-workflow",
           },
         },
+        today: DateTime.fromJSDate(new Date()).toISODate(),
       },
     });
   });

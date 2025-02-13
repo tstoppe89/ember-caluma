@@ -14,6 +14,7 @@ const TRANSFORMS = [
   "stringify",
   "flatten",
   "length",
+  "timestamp",
 ];
 const BINARY_OPS = ["intersects"];
 

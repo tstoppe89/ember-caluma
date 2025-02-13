@@ -1,4 +1,5 @@
 import { settled } from "@ember/test-helpers";
+import { DateTime } from "luxon";
 import { module, test, skip } from "qunit";
 
 import {
@@ -284,6 +285,27 @@ module("Unit | Library | document", function (hooks) {
     },
   );
 
+  test.each(
+    "it transforms correcty with timestamp transform",
+    [
+      ["'2025-02-13'|timestamp", 1739401200000],
+      ["'2006-06-06'|timestamp > info.today|timestamp", false],
+      ["'2006-06-06'|timestamp > info.today|timestamp", false],
+      ["'1-2-3'|timestamp", null],
+      ["'foobar'|timestamp", null],
+      ["1|timestamp", null],
+      ["1.1|timestamp", null],
+      ["null|timestamp", null],
+    ],
+    async function (assert, [expression, expected]) {
+      assert.strictEqual(
+        await this.document.jexl.eval(expression, this.document.jexlContext),
+        expected,
+        `Expected expression "${expression}" to evaluate to "${expected}"`,
+      );
+    },
+  );
+
   test("computes the correct jexl context (task form)", async function (assert) {
     assert.expect(1);
 
@@ -300,6 +322,7 @@ module("Unit | Library | document", function (hooks) {
           workflow: "child-case-workflow",
         },
         root: { form: "form", formMeta: { "is-top-form": true, level: 0 } },
+        today: DateTime.fromJSDate(new Date()).toISODate(),
       },
     });
   });
@@ -326,6 +349,7 @@ module("Unit | Library | document", function (hooks) {
           workflow: "child-case-workflow",
         },
         root: { form: "form", formMeta: { "is-top-form": true, level: 0 } },
+        today: DateTime.fromJSDate(new Date()).toISODate(),
       },
     });
   });
@@ -352,6 +376,7 @@ module("Unit | Library | document", function (hooks) {
           workflow: undefined,
         },
         root: { form: "form", formMeta: { "is-top-form": true, level: 0 } },
+        today: DateTime.fromJSDate(new Date()).toISODate(),
       },
     });
   });
